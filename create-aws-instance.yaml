@@ -1,0 +1,29 @@
+---
+
+
+- hosts: localhost  
+  connection: local
+
+  vars:
+        aws_enviornment: stage
+        server_name: webserver
+        security_group_name: sg-4304fb2b
+  tasks: 
+    - name: Create EC2 Server
+      ec2:
+        key_name: id_rsa
+        instance_type: t2.micro
+        image: ami-10547475
+        region: us-east-2
+        group_id:
+          - "{{ security_group_name }}"
+        wait: yes
+        instance_tags:
+          env: "{{ aws_enviornment }}"
+        vpc_subnet_id:  subnet-078b544a
+        exact_count: 3
+        count_tag:
+          env: "{{ aws_enviornment }}"
+      register: ec2_info
+      
+    - debug: var=ec2_info  
